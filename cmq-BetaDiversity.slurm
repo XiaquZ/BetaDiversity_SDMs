@@ -6,7 +6,7 @@
 
 source $VSC_HOME/.bashrc
 
-cd $VSC_DATA/MakeTiles_CutFutBinaryStacks/
+cd $VSC_DATA/BetaDiversity_SDMs/
 export OMP_NUM_THREADS=1
 
 source activate VoCC_R_new
