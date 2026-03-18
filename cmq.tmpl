@@ -13,7 +13,7 @@ source $VSC_HOME/.bashrc
 
 source activate VoCC_R_new
 
-cd $VSC_DATA/MakeTiles_CutFutBinaryStacks/
+cd $VSC_DATA/BetaDiversity_SDMs/
 export OMP_NUM_THREADS=1
 
 CMQ_AUTH={{ auth }} R --no-save --no-restore -e 'clustermq:::worker("{{ master }}")'
