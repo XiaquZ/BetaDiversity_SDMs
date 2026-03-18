@@ -1,6 +1,6 @@
 #! /bin/bash -l
 #SBATCH --job-name=Beta_diversity
-#SBATCH --ntasks=1 --cpus-per-task=10 --mem-per-cpu=6000mb
+#SBATCH --ntasks=1 --cpus-per-task=1 --mem-per-cpu=5000mb
 #SBATCH --time=48:35:00
 #SBATCH -A lp_climateplants
 
