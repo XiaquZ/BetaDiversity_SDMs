@@ -3,7 +3,7 @@
 #SBATCH --mem-per-cpu={{ per_cpu_mem }}
 #SBATCH --array=1-{{ n_jobs }}
 #SBATCH --ntasks={{ n_tasks | 1 }}
-#SBATCH --cpus-per-task={{ per_task_cpus | 72 }}
+#SBATCH --cpus-per-task={{ per_task_cpus | 32 }}
 ##SBATCH --partition=superdome_long
 #SBATCH --time={{ walltime | 49:00:00 }}
 #SBATCH -M wice
