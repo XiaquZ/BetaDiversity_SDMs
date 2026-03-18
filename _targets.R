@@ -9,11 +9,11 @@ library(tarchetypes)
 library(clustermq)
 
 ## Running on HPC with Slurm:
-# # Settings for clustermq
-# options(
-#   clustermq.scheduler = "slurm",
-#   clustermq.template = "./cmq.tmpl" # if using your own template
-# )
+# Settings for clustermq
+options(
+  clustermq.scheduler = "slurm",
+  clustermq.template = "./cmq.tmpl" # if using your own template
+)
 
 # Running locally on Windows
 # options(clustermq.scheduler = "multiprocess")
