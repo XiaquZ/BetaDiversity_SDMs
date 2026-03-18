@@ -5,7 +5,7 @@
 
 # Load packages required to define the pipeline:
 library(targets)
-library(tarchetypes) 
+library(tarchetypes)
 library(clustermq)
 
 ## Running on HPC with Slurm:
@@ -16,20 +16,20 @@ library(clustermq)
 # )
 
 # Running locally on Windows
-options(clustermq.scheduler = "multiprocess")
+# options(clustermq.scheduler = "multiprocess")
 
 # Set target options:
-# tar_option_set(
-#   resources = tar_resources(
-#     clustermq = tar_resources_clustermq(template = list(
-#       job_name = "MakeTiles_CutFutBinaryStacks",
-#       per_cpu_mem = "4000mb", #"3470mb"(wice thin node), #"21000mb" (genius bigmem， hugemem)"5100mb"
-#       n_tasks = 1,
-#       per_task_cpus = 16,
-#       walltime = "48:00:00"
-#     ))
-#   )
-# )
+tar_option_set(
+  resources = tar_resources(
+    clustermq = tar_resources_clustermq(template = list(
+      job_name = "Beta_diversity",
+      per_cpu_mem = "5000mb", #"3470mb"(wice thin node), #"21000mb" (genius bigmem， hugemem)"5100mb"
+      n_tasks = 1,
+      per_task_cpus = 32,
+      walltime = "48:00:00"
+    ))
+  )
+)
 
 # Run the R scripts in the R/ folder with your custom functions:
 tar_source()
@@ -43,17 +43,17 @@ list(
   # -----------------------
   tar_target(
     cur_tile_dir,
-    "I:/DATA/SDM_current/results/Binary_CurrentActual_tiles/"
+    "/lustre1/scratch/348/vsc34871/output/Binary_CurrentActual_tiles/"
   ),
 
   tar_target(
     fut_tile_dir,
-    "I:/DATA/SDM_future/Binary_FutureReachable_tiles/"
+    "/lustre1/scratch/348/vsc34871/output/Binary_FutureReachable_tiles/tile_future_009.tif"
   ),
 
   tar_target(
     out_dir,
-    "I:/DATA/beta_temp_tiles/"
+    "/lustre1/scratch/348/vsc34871/output/tile_output_beta/"
   ),
 
   # -----------------------

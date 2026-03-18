@@ -1,0 +1,19 @@
+#!/bin/sh
+#SBATCH --job-name={{ job_name }}
+#SBATCH --mem-per-cpu={{ per_cpu_mem }}
+#SBATCH --array=1-{{ n_jobs }}
+#SBATCH --ntasks={{ n_tasks | 1 }}
+#SBATCH --cpus-per-task={{ per_task_cpus | 72 }}
+##SBATCH --partition=superdome_long
+#SBATCH --time={{ walltime | 49:00:00 }}
+#SBATCH -M wice
+#SBATCH -A lp_climateplants
+
+source $VSC_HOME/.bashrc
+
+source activate VoCC_R_new
+
+cd $VSC_DATA/MakeTiles_CutFutBinaryStacks/
+export OMP_NUM_THREADS=1
+
+CMQ_AUTH={{ auth }} R --no-save --no-restore -e 'clustermq:::worker("{{ master }}")'
