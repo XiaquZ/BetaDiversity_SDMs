@@ -48,7 +48,7 @@ list(
 
   tar_target(
     fut_tile_dir,
-    "/lustre1/scratch/348/vsc34871/output/Binary_FutureReachable_tiles/tile_future_009.tif"
+    "/lustre1/scratch/348/vsc34871/output/Binary_FutureReachable_tiles/"
   ),
 
   tar_target(
