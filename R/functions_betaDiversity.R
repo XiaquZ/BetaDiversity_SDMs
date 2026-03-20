@@ -234,8 +234,8 @@ process_one_tile_beta <- function(cur_tile,
 # proportional richness change: (future - current) / current
 ratio_rich <- terra::ifel(rich_cur > 0, delta_rich / rich_cur, NA)
 ratio_rich <- terra::ifel(rich_cur == 0 & rich_fut == 0, 0, ratio_rich)
-# colonization from zero-richness baseline
-colonization_rich <- terra::ifel(rich_cur == 0 & rich_fut > 0, rich_fut, 0)
+# # colonization from zero-richness baseline
+# colonization_rich <- terra::ifel(rich_cur == 0 & rich_fut > 0, rich_fut, 0)
 
   
   b_losses   <- rich_cur - a_shared
@@ -265,7 +265,8 @@ colonization_rich <- terra::ifel(rich_cur == 0 & rich_fut > 0, rich_fut, 0)
 
       den_sor  <- 2 * a + b + c
       beta_sor <- ifelse(den_sor == 0, 0, (b + c) / den_sor)
-
+      
+     # Simpson dissimilarity (turnover component of Sorensen). 
       m        <- pmin(b, c)
       den_sim  <- a + m
       beta_sim <- ifelse(den_sim == 0, 0, m / den_sim)
@@ -296,7 +297,7 @@ colonization_rich <- terra::ifel(rich_cur == 0 & rich_fut > 0, rich_fut, 0)
   f_abc      <- file.path(out_dir, paste0("tile_", tile_id, "_abc.tif"))
   f_beta     <- file.path(out_dir, paste0("tile_", tile_id, "_beta.tif"))
   f_ratio <- file.path(out_dir, paste0("tile_", tile_id, "_richness_ratio.tif"))
-  f_colonization  <- file.path(out_dir, paste0("tile_", tile_id, "_colonization_richness.tif"))
+  #f_colonization  <- file.path(out_dir, paste0("tile_", tile_id, "_colonization_richness.tif"))
 
   # -----------------------------
   # Write outputs
@@ -307,7 +308,7 @@ colonization_rich <- terra::ifel(rich_cur == 0 & rich_fut > 0, rich_fut, 0)
   terra::writeRaster(abc, f_abc, overwrite = overwrite, wopt = wopt_int2u())
   terra::writeRaster(beta_stack, f_beta, overwrite = overwrite, wopt = wopt_flt4s())
   terra::writeRaster(ratio_rich, f_ratio, overwrite = overwrite, wopt = wopt_flt4s())
-  terra::writeRaster(colonization_rich, f_colonization, overwrite = overwrite, wopt = wopt_int2u())
+  #terra::writeRaster(colonization_rich, f_colonization, overwrite = overwrite, wopt = wopt_int2u())
 
   list(
     tile_id     = tile_id,
@@ -315,7 +316,7 @@ colonization_rich <- terra::ifel(rich_cur == 0 & rich_fut > 0, rich_fut, 0)
     rich_fut    = f_rich_fut,
     rich_change = f_delta,
     rich_ratio  = f_ratio,
-    colonization_rich  = f_colonization,
+    #colonization_rich  = f_colonization,
     abc         = f_abc,
     beta        = f_beta
   )
