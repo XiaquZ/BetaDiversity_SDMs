@@ -195,6 +195,37 @@ process_one_tile_beta <- function(cur_tile,
   tile_id <- tile_id_cur
   message("Processing tile ", tile_id)
 
+# -----------------------------
+  # Output paths
+  # -----------------------------
+  f_rich_cur <- file.path(out_dir, paste0("tile_", tile_id, "_richness_current.tif"))
+  f_rich_fut <- file.path(out_dir, paste0("tile_", tile_id, "_richness_future.tif"))
+  f_delta    <- file.path(out_dir, paste0("tile_", tile_id, "_richness_change.tif"))
+  f_abc      <- file.path(out_dir, paste0("tile_", tile_id, "_abc.tif"))
+  f_beta     <- file.path(out_dir, paste0("tile_", tile_id, "_beta.tif"))
+  f_ratio    <- file.path(out_dir, paste0("tile_", tile_id, "_richness_ratio.tif"))
+
+  out_files <- c(f_rich_cur, f_rich_fut, f_delta, f_abc, f_beta, f_ratio)
+
+  # -----------------------------
+  # Skip tile if all outputs already exist
+  # -----------------------------
+  if (!overwrite && all(file.exists(out_files))) {
+    message("Tile ", tile_id, " already done, skipping.")
+    return(list(
+      tile_id     = tile_id,
+      rich_cur    = f_rich_cur,
+      rich_fut    = f_rich_fut,
+      rich_change = f_delta,
+      rich_ratio  = f_ratio,
+      abc         = f_abc,
+      beta        = f_beta
+    ))
+  }
+
+  message("Processing tile ", tile_id)
+
+
   # -----------------------------
   # Read tile stacks
   # -----------------------------
@@ -287,17 +318,6 @@ ratio_rich <- terra::ifel(rich_cur == 0 & rich_fut == 0, 0, ratio_rich)
     }
   )
   names(beta_stack) <- c("beta_sor", "beta_sim", "beta_nes")
-
-  # -----------------------------
-  # Output paths
-  # -----------------------------
-  f_rich_cur <- file.path(out_dir, paste0("tile_", tile_id, "_richness_current.tif"))
-  f_rich_fut <- file.path(out_dir, paste0("tile_", tile_id, "_richness_future.tif"))
-  f_delta    <- file.path(out_dir, paste0("tile_", tile_id, "_richness_change.tif"))
-  f_abc      <- file.path(out_dir, paste0("tile_", tile_id, "_abc.tif"))
-  f_beta     <- file.path(out_dir, paste0("tile_", tile_id, "_beta.tif"))
-  f_ratio <- file.path(out_dir, paste0("tile_", tile_id, "_richness_ratio.tif"))
-  #f_colonization  <- file.path(out_dir, paste0("tile_", tile_id, "_colonization_richness.tif"))
 
   # -----------------------------
   # Write outputs

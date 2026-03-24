@@ -23,9 +23,9 @@ tar_option_set(
   resources = tar_resources(
     clustermq = tar_resources_clustermq(template = list(
       job_name = "Beta_diversity",
-      per_cpu_mem = "5000mb", #"3470mb"(wice thin node), #"21000mb" (genius bigmem， hugemem)"5100mb"
+      per_cpu_mem = "4100mb", #"3470mb"(wice thin node), #"21000mb" (genius bigmem， hugemem)"5100mb"
       n_tasks = 1,
-      per_task_cpus = 24,
+      per_task_cpus = 16,
       walltime = "48:00:00"
     ))
   )
