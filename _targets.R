@@ -61,7 +61,7 @@ list(
   # -----------------------
   tar_target(
     target_tile_ids,
-    normalize_tile_id(c(19, 26，40, 41))
+    normalize_tile_id(c(19, 26, 40, 41))
   ),
   # -----------------------
   # Match all current/future tile pairs
