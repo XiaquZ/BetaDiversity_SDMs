@@ -23,9 +23,9 @@ tar_option_set(
   resources = tar_resources(
     clustermq = tar_resources_clustermq(template = list(
       job_name = "Beta_diversity",
-      per_cpu_mem = "3000mb", #"3470mb"(wice thin node), #"21000mb" (genius bigmem， hugemem)"5100mb"
+      per_cpu_mem = "4000mb", #"3470mb"(wice thin node), #"21000mb" (genius bigmem， hugemem)"5100mb"
       n_tasks = 1,
-      per_task_cpus = 72,
+      per_task_cpus = 24,
       walltime = "48:00:00"
     ))
   )
@@ -57,11 +57,36 @@ list(
   ),
 
   # -----------------------
-  # Match current/future tile pairs
+  # Set the single tile you want to process
+  # -----------------------
+  tar_target(
+    target_tile_ids,
+    normalize_tile_id(c(19, 40, 41))
+  ),
+  # -----------------------
+  # Match all current/future tile pairs
+  # -----------------------
+  tar_target(
+    tile_pairs_all,
+    match_tile_files(cur_tile_dir, fut_tile_dir),
+    format = "rds"
+  ),
+
+   # -----------------------
+  # Keep only the requested tile
   # -----------------------
   tar_target(
     tile_pairs,
-    match_tile_files(cur_tile_dir, fut_tile_dir),
+    {
+      tp <- tile_pairs_all[tile_pairs_all$tile_id %in% target_tile_ids, , drop = FALSE]
+
+      missing_ids <- setdiff(target_tile_ids, tp$tile_id)
+      if (length(missing_ids) > 0) {
+        stop("Requested tile_id(s) not found: ", paste(missing_ids, collapse = ", "))
+      }
+
+      tp[order(match(tp$tile_id, target_tile_ids)), , drop = FALSE]
+    },
     format = "rds"
   ),
 
@@ -70,7 +95,9 @@ list(
     process_one_tile_beta(
       cur_tile = tile_pairs$cur_tile,
       fut_tile = tile_pairs$fut_tile,
-      out_dir  = out_dir
+      out_dir  = out_dir,
+      overwrite = TRUE,
+      tile_id = tile_pairs$tile_id
     ),
     pattern = map(tile_pairs),
     iteration = "list",

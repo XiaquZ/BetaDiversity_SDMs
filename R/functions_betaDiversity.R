@@ -50,10 +50,20 @@ to_species_key <- function(x) {
 # Extract numeric tile ID from file path
 # Works for names like tile_current12.tif / tile_future12.tif
 # ---------------------------------------------------------
-get_tile_id <- function(x) {
-  sub("^.*?(\\d+)\\.tif$", "\\1", basename(x))
+normalize_tile_id <- function(x) {
+  sprintf("%03d", as.integer(x))
 }
 
+get_tile_id <- function(x) {
+  x <- basename(x)
+  x <- sub("\\.tif$", "", x, ignore.case = TRUE)
+  id <- sub("^.*_(\\d+)$", "\\1", x)
+
+  if (identical(id, x)) {
+    stop("Could not extract tile ID from filename: ", x)
+  }
+  normalize_tile_id(id)
+}
 # ---------------------------------------------------------
 # Match current and future tile files by tile ID
 # Returns a data.frame with one row per matched tile pair
@@ -69,8 +79,8 @@ match_tile_files <- function(cur_tile_dir, fut_tile_dir) {
     stop("No future tile files found in: ", fut_tile_dir)
   }
 
-  cur_ids <- get_tile_id(cur_files)
-  fut_ids <- get_tile_id(fut_files)
+  cur_ids <- normalize_tile_id(get_tile_id(cur_files))
+  fut_ids <- normalize_tile_id(get_tile_id(fut_files))
 
   if (!setequal(cur_ids, fut_ids)) {
     stop(
@@ -180,7 +190,8 @@ merge_tile_outputs <- function(files,
 process_one_tile_beta <- function(cur_tile,
                                   fut_tile,
                                   out_dir,
-                                  overwrite = TRUE) {
+                                  overwrite = TRUE,
+                                  tile_id = NULL) {
   set_terra_hpc()
 
   dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
@@ -189,10 +200,22 @@ process_one_tile_beta <- function(cur_tile,
   tile_id_fut <- get_tile_id(fut_tile)
 
   if (!identical(tile_id_cur, tile_id_fut)) {
-    stop("Tile ID mismatch: current=", tile_id_cur, ", future=", tile_id_fut)
-  }
+  stop("Tile ID mismatch: current=", tile_id_cur, ", future=", tile_id_fut)
+}
 
+if (!is.null(tile_id)) {
+  tile_id <- normalize_tile_id(tile_id)
+
+  if (!identical(tile_id, tile_id_cur)) {
+      stop(
+        "Supplied tile_id (", tile_id,
+        ") does not match file tile_id (", tile_id_cur, ")."
+      )
+    }
+} else {
   tile_id <- tile_id_cur
+}
+
   message("Processing tile ", tile_id)
 
 # -----------------------------
@@ -222,9 +245,6 @@ process_one_tile_beta <- function(cur_tile,
       beta        = f_beta
     ))
   }
-
-  message("Processing tile ", tile_id)
-
 
   # -----------------------------
   # Read tile stacks
