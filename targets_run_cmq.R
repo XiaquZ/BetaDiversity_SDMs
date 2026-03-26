@@ -1,5 +1,5 @@
 library(targets)
 tar_make_clustermq(
-    workers = 8,
+    workers = 3,
     seconds_meta_append = 1
     )
