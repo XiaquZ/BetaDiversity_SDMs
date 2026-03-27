@@ -102,119 +102,107 @@ list(
     pattern = map(tile_pairs),
     iteration = "list",
     format = "rds"
+  ),
+
+  # -----------------------
+  # Collect ALL finished tile outputs from disk
+  # -----------------------
+  tar_target(
+    rich_cur_tiles,
+    list_metric_tiles(out_dir, "^tile_\\d+_richness_current\\.tif$"),
+    format = "file"
+  ),
+
+  tar_target(
+    rich_fut_tiles,
+    list_metric_tiles(out_dir, "^tile_\\d+_richness_future\\.tif$"),
+    format = "file"
+  ),
+
+  tar_target(
+    rich_change_tiles,
+    list_metric_tiles(out_dir, "^tile_\\d+_richness_change\\.tif$"),
+    format = "file"
+  ),
+
+  tar_target(
+    rich_ratio_tiles,
+    list_metric_tiles(out_dir, "^tile_\\d+_richness_ratio\\.tif$"),
+    format = "file"
+  ),
+
+  tar_target(
+    abc_tiles,
+    list_metric_tiles(out_dir, "^tile_\\d+_abc\\.tif$"),
+    format = "file"
+  ),
+
+  tar_target(
+    beta_tiles,
+    list_metric_tiles(out_dir, "^tile_\\d+_beta\\.tif$"),
+    format = "file"
+  ),
+
+# -----------------------
+  # Merge Europe-wide rasters
+  # -----------------------
+  tar_target(
+    final_rich_cur,
+    merge_tile_outputs(
+      files = rich_cur_tiles,
+      out_file = file.path(out_dir, "EU_richness_current.tif"),
+      wopt = wopt_int2u()
+    ),
+    format = "file"
+  ),
+
+  tar_target(
+    final_rich_fut,
+    merge_tile_outputs(
+      files = rich_fut_tiles,
+      out_file = file.path(out_dir, "EU_richness_future.tif"),
+      wopt = wopt_int2u()
+    ),
+    format = "file"
+  ),
+
+  tar_target(
+    final_rich_change,
+    merge_tile_outputs(
+      files = rich_change_tiles,
+      out_file = file.path(out_dir, "EU_richness_change_future_minus_current.tif"),
+      wopt = wopt_int2s()
+    ),
+    format = "file"
+  ),
+
+  tar_target(
+    final_rich_ratio,
+    merge_tile_outputs(
+      files = rich_ratio_tiles,
+      out_file = file.path(out_dir, "EU_richness_ratio.tif"),
+      wopt = wopt_flt4s()
+    ),
+    format = "file"
+  ),
+
+  tar_target(
+    final_abc,
+    merge_tile_outputs(
+      files = abc_tiles,
+      out_file = file.path(out_dir, "EU_abc_shared_loss_gain.tif"),
+      wopt = wopt_int2u()
+    ),
+    format = "file"
+  ),
+
+  tar_target(
+    final_beta,
+    merge_tile_outputs(
+      files = beta_tiles,
+      out_file = file.path(out_dir, "EU_beta_Baselga2010_sor_sim_nes.tif"),
+      wopt = wopt_flt4s()
+    ),
+    format = "file"
   )
 )
-
-  # # -----------------------
-  # # Extract file groups from worker returns
-  # # -----------------------
-  # tar_target(
-  #   rich_cur_tile,
-  #   tile_output$rich_cur,
-  #   pattern = map(tile_output),
-  #   format = "file"
-  # ),
-  # 
-  # tar_target(
-  #   rich_fut_tile,
-  #   tile_output$rich_fut,
-  #   pattern = map(tile_output),
-  #   format = "file"
-  # ),
-  # 
-  # tar_target(
-  #   rich_change_tile,
-  #   tile_output$rich_change,
-  #   pattern = map(tile_output),
-  #   format = "file"
-  # ),
-  # 
-  # tar_target(
-  #   rich_ratio_tile,
-  #   tile_output$rich_ratio,
-  #   pattern = map(tile_output),
-  #   format = "file"
-  # ),
-  # 
-  # tar_target(
-  #   colonization_tile,
-  #   tile_output$colonization_rich,
-  #   pattern = map(tile_output),
-  #   format = "file"
-  # ),
-  # 
-  # tar_target(
-  #   abc_tile,
-  #   tile_output$abc,
-  #   pattern = map(tile_output),
-  #   format = "file"
-  # ),
-  # 
-  # tar_target(
-  #   beta_tile,
-  #   tile_output$beta,
-  #   pattern = map(tile_output),
-  #   format = "file"
-  # )
-
-#   # -----------------------
-#   # Merge final rasters
-#   # -----------------------
-#   tar_target(
-#     final_rich_cur,
-#     merge_tile_outputs(
-#       files    = rich_cur_tiles,
-#       out_file = file.path(out_dir, "EU_richness_current.tif"),
-#       wopt     = wopt_int2u()
-#     ),
-#     format = "file"
-#   ),
-# 
-#   tar_target(
-#     final_rich_fut,
-#     merge_tile_outputs(
-#       files    = rich_fut_tiles,
-#       out_file = file.path(out_dir, "EU_richness_future.tif"),
-#       wopt     = wopt_int2u()
-#     ),
-#     format = "file"
-#   ),
-# 
-#   tar_target(
-#     final_rich_change,
-#     merge_tile_outputs(
-#       files    = rich_change_tiles,
-#       out_file = file.path(out_dir, "EU_richness_change_future_minus_current.tif"),
-#       wopt     = wopt_int2s()
-#     ),
-#     format = "file"
-#   ),
-# 
-#   tar_target(
-#     final_abc,
-#     merge_tile_outputs(
-#       files    = abc_tiles,
-#       out_file = file.path(out_dir, "EU_abc_shared_loss_gain.tif"),
-#       wopt     = wopt_int2u()
-#     ),
-#     format = "file"
-#   ),
-# 
-#   tar_target(
-#     final_beta,
-#     merge_tile_outputs(
-#       files    = beta_tiles,
-#       out_file = file.path(out_dir, "EU_beta_Baselga2010_sor_sim_nes.tif"),
-#       wopt     = wopt_flt4s()
-#     ),
-#     format = "file"
-#   ),
-#   tar_target(
-#   final_rich_ratio,
-#   merge_tile_outputs(
-#     files    = rich_ratio_tiles,
-#     out_file = file.path(out_dir, "EU_richness_ratio.tif"),
-#     wopt     = wopt_flt4s()
-#   ),
-#   format = "file"
-# )
