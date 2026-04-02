@@ -270,7 +270,8 @@ if (!is.null(tile_id)) {
   if (!terra::compareGeom(C, F, stopOnError = FALSE)) {
     stop("Current and future tile geometry do not match for tile ", tile_id)
   }
-
+  
+  message("Matching tile layers")
   matched <- match_tile_layers(C, F, tile_id = tile_id)
   C <- matched$C
   F <- matched$F
@@ -278,12 +279,14 @@ if (!is.null(tile_id)) {
   # -----------------------------
   # Richness
   # -----------------------------
+  message("Computing rich_cur")
   rich_cur <- sum(C == 1, na.rm = TRUE)
   rich_fut <- sum(F == 1, na.rm = TRUE)
 
   # -----------------------------
   # Shared / losses / gains
   # -----------------------------
+  message("Computing a_shared")
   a_shared <- sum((C == 1) & (F == 1), na.rm = TRUE)
 
   # # (Not sure if I need codes below)cells are NA only if both current and future are fully NA at that cell
@@ -324,6 +327,7 @@ ratio_rich <- terra::ifel(rich_cur == 0 & rich_fut == 0, 0, ratio_rich)
   # -----------------------------
   # Baselga 2010 beta diversity
   # -----------------------------
+  message("Computing beta_stack")
   beta_stack <- terra::lapp(
     abc,
     fun = function(a, b, c) {
@@ -357,6 +361,7 @@ ratio_rich <- terra::ifel(rich_cur == 0 & rich_fut == 0, 0, ratio_rich)
   # -----------------------------
   # Write outputs
   # -----------------------------
+  message("Writing outputs")
   terra::writeRaster(rich_cur, f_rich_cur, overwrite = overwrite, wopt = wopt_int2u())
   terra::writeRaster(rich_fut, f_rich_fut, overwrite = overwrite, wopt = wopt_int2u())
   terra::writeRaster(delta_rich, f_delta, overwrite = overwrite, wopt = wopt_int2s())
