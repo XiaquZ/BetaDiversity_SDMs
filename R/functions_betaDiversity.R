@@ -270,6 +270,7 @@ if (!is.null(tile_id)) {
   if (!terra::compareGeom(C, F, stopOnError = FALSE)) {
     stop("Current and future tile geometry do not match for tile ", tile_id)
   }
+  message("Geometry OK")
   
   message("Matching tile layers")
   matched <- match_tile_layers(C, F, tile_id = tile_id)
@@ -279,7 +280,7 @@ if (!is.null(tile_id)) {
   # -----------------------------
   # Richness
   # -----------------------------
-  message("Computing rich_cur")
+  message("Computing rich_cur and rich_fut")
   rich_cur <- sum(C == 1, na.rm = TRUE)
   rich_fut <- sum(F == 1, na.rm = TRUE)
 
@@ -306,7 +307,7 @@ ratio_rich <- terra::ifel(rich_cur == 0 & rich_fut == 0, 0, ratio_rich)
 # # colonization from zero-richness baseline
 # colonization_rich <- terra::ifel(rich_cur == 0 & rich_fut > 0, rich_fut, 0)
 
-  
+  message("Computing b/c")
   b_losses   <- rich_cur - a_shared
   c_gains    <- rich_fut - a_shared
   
