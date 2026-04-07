@@ -55,13 +55,25 @@ normalize_tile_id <- function(x) {
 }
 
 get_tile_id <- function(x) {
-  x <- basename(x)
-  x <- sub("\\.tif$", "", x, ignore.case = TRUE)
-  id <- sub("^.*_(\\d+)$", "\\1", x)
+  x0 <- basename(x)
+  x  <- sub("\\.tif$", "", x0, ignore.case = TRUE)
 
-  if (identical(id, x)) {
-    stop("Could not extract tile ID from filename: ", x)
+  id <- NA_character_
+
+  # style 1: tile_current_001 / tile_future_001
+  if (grepl("^tile_(current|future)_\\d+$", x, ignore.case = TRUE)) {
+    id <- sub("^tile_(current|future)_(\\d+)$", "\\2", x, ignore.case = TRUE)
   }
+
+  # style 2: tile_001_richness_current / tile_001_beta / tile_001_abc
+  if (is.na(id) && grepl("^tile_\\d+_", x, ignore.case = TRUE)) {
+    id <- sub("^tile_(\\d+)_.*$", "\\1", x, ignore.case = TRUE)
+  }
+
+  if (is.na(id) || !grepl("^\\d+$", id)) {
+    stop("Could not extract tile ID from filename: ", x0)
+  }
+
   normalize_tile_id(id)
 }
 # ---------------------------------------------------------
