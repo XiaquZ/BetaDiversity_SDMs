@@ -56,22 +56,24 @@ normalize_tile_id <- function(x) {
 
 get_tile_id <- function(x) {
   x0 <- basename(x)
-  x  <- sub("\\.tif$", "", x0, ignore.case = TRUE)
+  x1 <- sub("\\.tif$", "", x0, ignore.case = TRUE)
 
-  id <- NA_character_
+  id <- rep(NA_character_, length(x1))
 
   # style 1: tile_current_001 / tile_future_001
-  if (grepl("^tile_(current|future)_\\d+$", x, ignore.case = TRUE)) {
-    id <- sub("^tile_(current|future)_(\\d+)$", "\\2", x, ignore.case = TRUE)
-  }
+  i1 <- grepl("^tile_(current|future)_\\d+$", x1, ignore.case = TRUE)
+  id[i1] <- sub("^tile_(current|future)_(\\d+)$", "\\2", x1[i1], ignore.case = TRUE)
 
   # style 2: tile_001_richness_current / tile_001_beta / tile_001_abc
-  if (is.na(id) && grepl("^tile_\\d+_", x, ignore.case = TRUE)) {
-    id <- sub("^tile_(\\d+)_.*$", "\\1", x, ignore.case = TRUE)
-  }
+  i2 <- is.na(id) & grepl("^tile_\\d+_", x1, ignore.case = TRUE)
+  id[i2] <- sub("^tile_(\\d+)_.*$", "\\1", x1[i2], ignore.case = TRUE)
 
-  if (is.na(id) || !grepl("^\\d+$", id)) {
-    stop("Could not extract tile ID from filename: ", x0)
+  bad <- is.na(id) | !grepl("^\\d+$", id)
+  if (any(bad)) {
+    stop(
+      "Could not extract tile ID from filename(s): ",
+      paste(x0[bad], collapse = ", ")
+    )
   }
 
   normalize_tile_id(id)
@@ -91,8 +93,8 @@ match_tile_files <- function(cur_tile_dir, fut_tile_dir) {
     stop("No future tile files found in: ", fut_tile_dir)
   }
 
-  cur_ids <- normalize_tile_id(get_tile_id(cur_files))
-  fut_ids <- normalize_tile_id(get_tile_id(fut_files))
+  cur_ids <- get_tile_id(cur_files)
+  fut_ids <- get_tile_id(fut_files)
 
   if (!setequal(cur_ids, fut_ids)) {
     stop(
@@ -175,7 +177,13 @@ list_metric_tiles <- function(out_dir, pattern) {
     stop("No files found in ", out_dir, " matching: ", pattern)
   }
 
-  files[order(as.integer(get_tile_id(files)))]
+  ids <- get_tile_id(files)
+  files <- files[order(as.integer(ids))]
+
+  message("Found ", length(files), " tile file(s).")
+  message("Tile IDs: ", paste(get_tile_id(files), collapse = ", "))
+
+  files
 }
 
 merge_tile_outputs <- function(files,
