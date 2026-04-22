@@ -53,7 +53,7 @@ list(
 
   tar_target(
     out_dir,
-    "/lustre1/scratch/348/vsc34871/output/RedList_tile_output_Beta/"
+    "/lustre1/scratch/348/vsc34871/output/tile_output_beta_RedList/"
   ),
 
   # # -----------------------
